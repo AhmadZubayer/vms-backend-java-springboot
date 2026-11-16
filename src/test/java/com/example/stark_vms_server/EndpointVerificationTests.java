@@ -226,14 +226,6 @@ class EndpointVerificationTests {
                     call(delete("/api/vehicles/" + createdId).header(HttpHeaders.AUTHORIZATION, bearer(token))));
             createdId = null;
 
-            check("POST /api/auth/logout", 204,
-                    call(post("/api/auth/logout").header(HttpHeaders.AUTHORIZATION, bearer(token))));
-            check("GET /api/auth/me after logout", 401,
-                    call(get("/api/auth/me").header(HttpHeaders.AUTHORIZATION, bearer(token))));
-            check("GET /api/vehicles after logout", 401,
-                    call(get("/api/vehicles").header(HttpHeaders.AUTHORIZATION, bearer(token))));
-            check("POST /api/auth/logout without a token", 401,
-                    call(post("/api/auth/logout")));
         } finally {
             if (createdId != null) {
                 vehicles.deleteById(createdId);

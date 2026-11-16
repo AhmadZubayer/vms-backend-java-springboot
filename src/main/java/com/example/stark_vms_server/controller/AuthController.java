@@ -52,13 +52,4 @@ public class AuthController {
                 .cacheControl(CacheControl.noStore())
                 .body(SendResponse.of(user));
     }
-
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@AuthenticationPrincipal Jwt jwt) {
-        authService.logout(jwt);
-
-        return ResponseEntity.noContent()
-                .cacheControl(CacheControl.noStore())
-                .build();
-    }
 }

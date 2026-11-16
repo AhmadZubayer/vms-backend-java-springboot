@@ -13,7 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -35,16 +33,14 @@ public class AuthService implements ApplicationRunner {
     private final PasswordEncoder passwords;
     private final JwtEncoder tokens;
     private final AuthProperties auth;
-    private final TokenDenylist revokedTokens;
     private final String fallbackHash;
 
     public AuthService(UserRepository users, PasswordEncoder passwords, JwtEncoder tokens,
-                       AuthProperties auth, TokenDenylist revokedTokens) {
+                       AuthProperties auth) {
         this.users = users;
         this.passwords = passwords;
         this.tokens = tokens;
         this.auth = auth;
-        this.revokedTokens = revokedTokens;
         this.fallbackHash = passwords.encode("placeholder-password-for-unknown-accounts");
     }
 
@@ -88,7 +84,6 @@ public class AuthService implements ApplicationRunner {
 
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .id(UUID.randomUUID().toString())
                 .issuer(JWT_ISSUER)
                 .subject(account)
                 .audience(List.of(JWT_AUDIENCE))
@@ -101,13 +96,6 @@ public class AuthService implements ApplicationRunner {
         return Optional.of(new AccessTokenResponse(
                 token, OAuth2AccessToken.TokenType.BEARER.getValue(), auth.tokenLifetimeSeconds()
         ));
-    }
-
-    /**
-     * Signs out the presented access token by remembering it as revoked until it expires.
-     */
-    public void logout(Jwt token) {
-        revokedTokens.revoke(token.getId(), token.getExpiresAt());
     }
 
     @Transactional(readOnly = true)

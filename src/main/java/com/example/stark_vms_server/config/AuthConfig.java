@@ -1,6 +1,5 @@
 package com.example.stark_vms_server.config;
 
-import com.example.stark_vms_server.service.TokenDenylist;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -21,11 +20,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
-import org.springframework.security.oauth2.core.OAuth2Error;
-import org.springframework.security.oauth2.core.OAuth2TokenValidator;
-import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtAudienceValidator;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -111,27 +106,14 @@ public class AuthConfig {
     }
 
     @Bean
-    JwtDecoder jwtDecoder(SecretKey jwtKey, TokenDenylist revokedTokens) {
+    JwtDecoder jwtDecoder(SecretKey jwtKey) {
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(jwtKey)
                 .macAlgorithm(MacAlgorithm.HS256).build();
         decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
                 JwtValidators.createDefaultWithIssuer(JWT_ISSUER),
-                new JwtAudienceValidator(JWT_AUDIENCE),
-                notSignedOut(revokedTokens)
+                new JwtAudienceValidator(JWT_AUDIENCE)
         ));
         return decoder;
-    }
-
-    private static OAuth2TokenValidator<Jwt> notSignedOut(
-            TokenDenylist revokedTokens
-    ) {
-        OAuth2Error signedOut = new OAuth2Error(
-                "invalid_token", "This access token was signed out.", null
-        );
-
-        return token -> revokedTokens.isRevoked(token.getId())
-                ? OAuth2TokenValidatorResult.failure(signedOut)
-                : OAuth2TokenValidatorResult.success();
     }
 
     private static void writeProblem(

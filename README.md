@@ -58,9 +58,8 @@ Every successful response is formatted by `SendResponse`, which wraps its payloa
 | --- | --- |
 | `POST /api/auth/login` | Exchange `userEmail` and `password` for an access token |
 | `GET /api/auth/me` | Read the signed-in account for the bearer token |
-| `POST /api/auth/logout` | Sign out the bearer token that was sent |
 
-Access tokens are self-contained, so `POST /api/auth/logout` cannot delete a token a client already holds. Instead the server remembers the token's `jti` until the token would have expired, and every later request with it is rejected with `401`. The list is kept in memory, so a restart accepts a signed-out token again for the rest of its short lifetime.
+There is no logout route. Access tokens are self-contained and short lived, so signing out is the client discarding its token; the server keeps no session to end. A token that leaks stays usable until it expires, which is why `APP_TOKEN_LIFETIME_SECONDS` defaults to 15 minutes. If you ever need an immediate server-side revocation, store each token's `jti` in Redis or a table on logout and reject those ids in the `JwtDecoder` validator.
 
 ## Vehicle routes
 
@@ -80,4 +79,76 @@ Access tokens are self-contained, so `POST /api/auth/logout` cannot delete a tok
 
 `q` matches part of a vehicle number, brand, company, model, type, or status, ignoring case; leaving it out lists every vehicle. `sort` takes a field and optional direction, such as `sort=status,desc`, and repeats for tie-breakers; sortable fields are `id`, `vehicleNumber`, `brand`, `company`, `model`, `type`, and `status`. Any other field is rejected with `400`. `size` defaults to 20 and is capped at 100.
 
-The JSON body for vehicle registration and updates has `vehicleNumber`, `brand`, `company`, `model`, `type`, and `status`. Accepted types are `CAR`, `SEDAN`, `SUV`, `HATCHBACK`, `PICKUP`, `VAN`, `BUS`, `TRUCK`, `MOTORCYCLE`, and `OTHER`. Accepted statuses are `ACTIVE`, `INACTIVE`, `MAINTENANCE`, and `RETIRED`. Vehicle numbers are unique regardless of case or surrounding spaces; a duplicate is rejected with `409` by the `uq_vehicles_vehicle_number` index.
+The JSON body for vehicle registration and updates has `vehicleNumber`, `brand`, `company`, `model`, `type`, and `status`. Accepted types are `CAR`, `SEDAN`, `SUV`, `HATCHBACK`, `PICKUP`, `VAN`, `BUS`, `TRUCK`, `MOTORCYCLE`, and `OTHER`. Accepted statuses are `ACTIVE`, `INACTIVE`, `MAINTENANCE`, and `RETIRED`. Vehicle numbers are unique regardless of case or surrounding spaces; a duplicate is rejected with `409`, as described below.
+
+## Duplicate vehicle numbers
+
+Uniqueness is enforced by PostgreSQL, not by application code, and the `409` the
+client sees is a translation of that constraint.
+
+### The constraint
+
+`V1__create_vehicles.sql` indexes the lowercased, trimmed value rather than the
+column itself:
+
+```sql
+CREATE UNIQUE INDEX uq_vehicles_vehicle_number
+    ON vehicles (lower(btrim(vehicle_number)));
+```
+
+So `DHAKA-1001`, `dhaka-1001` and `  DHAKA-1001  ` are the same vehicle number.
+Keeping the rule in the database also closes the race a check-then-insert in
+Java would leave open: two requests arriving together cannot both find the
+number free and then both insert it. One of them loses, at the index.
+
+`VehicleService` calls `strip()` on the incoming number before saving, and uses
+`saveAndFlush`, so the insert reaches PostgreSQL during the request instead of
+at transaction commit. That is what allows the failure to be caught and
+translated, rather than surfacing later as an unhandled `500`.
+
+### The translation
+
+`GlobalExceptionHandler` turns the violation of that one index into a `409`, and
+anything else into a logged `500`:
+
+```java
+@ExceptionHandler(DataIntegrityViolationException.class)
+public ProblemDetail handleDataIntegrityViolation(DataIntegrityViolationException exception) {
+    if (violatedConstraint(exception).equals(VEHICLE_NUMBER_INDEX)) {
+        return ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT, "A vehicle with that number already exists."
+        );
+    }
+
+    logger.error("Unexpected database constraint violation", exception);
+    return ProblemDetail.forStatusAndDetail(
+            HttpStatus.INTERNAL_SERVER_ERROR, "The database could not save the change."
+    );
+}
+```
+
+`violatedConstraint` reads the constraint name from the Hibernate
+`ConstraintViolationException` cause, so only this index produces the duplicate
+message; an unrelated integrity failure is never mislabelled as a duplicate.
+
+### What a client sees
+
+```
+POST /api/vehicles  {"vehicleNumber": "DHAKA-1001", ...}   201 Created
+POST /api/vehicles  {"vehicleNumber": "dhaka-1001", ...}   409 Conflict
+```
+
+```json
+{
+  "type": "about:blank",
+  "title": "Conflict",
+  "status": 409,
+  "detail": "A vehicle with that number already exists.",
+  "instance": "/api/vehicles"
+}
+```
+
+The body is `application/problem+json`, like every other failure, and carries no
+`errors` array because the clash is with a stored row rather than with the shape
+of the request. `PUT /api/vehicles/{id}` answers the same way, so renaming a
+vehicle to a number another one already holds is also a `409`.
