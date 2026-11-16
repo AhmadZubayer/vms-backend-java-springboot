@@ -1,0 +1,13 @@
+# Secrets never enter the image; the host supplies them as variables.
+.env
+
+target/
+.git/
+.github/
+.idea/
+.vscode/
+*.iml
+
+HELP.md
+README.md
+mvnw.cmd

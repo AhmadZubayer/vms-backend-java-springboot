@@ -1,0 +1,40 @@
+# Render Blueprint. In Render: New > Blueprint, point it at this repository.
+# Every value marked `sync: false` is typed into the Render dashboard once and
+# stored there, so no secret and no URL lives in this file.
+services:
+  - type: web
+    name: stark-vms-api
+    runtime: docker
+    plan: free
+    # Pick the region nearest your database, e.g. singapore, frankfurt, oregon.
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      # PostgreSQL. A JDBC URL, e.g.
+      # jdbc:postgresql://host/db?sslmode=require
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+
+      # Browser origins allowed to call /api/**, comma separated. Set this to
+      # wherever the Flutter client is served, e.g. https://vms.example.com
+      - key: APP_CORS_ALLOWED_ORIGIN_PATTERNS
+        sync: false
+
+      # Base64 signing key of at least 32 random bytes.
+      - key: APP_JWT_SECRET
+        sync: false
+
+      # First-run operator account; the app saves a bcrypt hash on first boot.
+      - key: APP_ADMIN_EMAIL
+        sync: false
+      - key: APP_ADMIN_PASSWORD
+        sync: false
+
+      - key: APP_TOKEN_LIFETIME_SECONDS
+        value: "900"
