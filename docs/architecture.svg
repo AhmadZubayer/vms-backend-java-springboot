@@ -11,14 +11,14 @@
   <text x="275" y="104" font-size="13" fill="#1F2937" text-anchor="middle">Request</text>
   <path d="M 520 125 L 590 125" fill="none" stroke="#1F3864" stroke-width="1.8" marker-end="url(#blue)" />
   <path d="M 700 170 L 700 322" fill="none" stroke="#1F3864" stroke-width="1.8" marker-end="url(#blue)" />
-  <rect x="721" y="237" width="50" height="19" rx="4" fill="#FFFFFF" />
-  <text x="746" y="250" font-size="13" fill="#1F2937" text-anchor="middle">calls</text>
+  <rect x="705" y="202" width="50" height="19" rx="4" fill="#FFFFFF" />
+  <text x="730" y="215" font-size="13" fill="#1F2937" text-anchor="middle">calls</text>
   <path d="M 660 420 L 660 532" fill="none" stroke="#1F3864" stroke-width="1.8" marker-end="url(#blue)" />
-  <rect x="571" y="479" width="50" height="19" rx="4" fill="#FFFFFF" />
-  <text x="596" y="492" font-size="13" fill="#1F2937" text-anchor="middle">query</text>
+  <rect x="571" y="499" width="50" height="19" rx="4" fill="#FFFFFF" />
+  <text x="596" y="512" font-size="13" fill="#1F2937" text-anchor="middle">query</text>
   <path d="M 740 532 L 740 428" fill="none" stroke="#1F3864" stroke-width="1.8" marker-end="url(#blue)" />
-  <rect x="789" y="479" width="58" height="19" rx="4" fill="#FFFFFF" />
-  <text x="818" y="492" font-size="13" fill="#1F2937" text-anchor="middle">entity</text>
+  <rect x="789" y="499" width="58" height="19" rx="4" fill="#FFFFFF" />
+  <text x="818" y="512" font-size="13" fill="#1F2937" text-anchor="middle">entity</text>
   <path d="M 600 375 L 528 375" fill="none" stroke="#1F3864" stroke-width="1.8" marker-end="url(#blue)" />
   <rect x="503" y="303" width="115" height="19" rx="4" fill="#FFFFFF" />
   <text x="560" y="316" font-size="13" fill="#1F2937" text-anchor="middle">entity to DTO</text>
@@ -26,14 +26,14 @@
   <rect x="143" y="343" width="115" height="19" rx="4" fill="#FFFFFF" />
   <text x="200" y="356" font-size="13" fill="#1F2937" text-anchor="middle">json envelope</text>
   <path d="M 420 170 L 420 250 L 990 250 L 990 322" fill="none" stroke="#C1443C" stroke-width="1.8" stroke-dasharray="7 5" marker-end="url(#red)" />
-  <rect x="683" y="219" width="34" height="19" rx="4" fill="#FFFFFF" />
-  <text x="700" y="232" font-size="13" fill="#1F2937" text-anchor="middle">401</text>
+  <rect x="503" y="219" width="34" height="19" rx="4" fill="#FFFFFF" />
+  <text x="520" y="232" font-size="13" fill="#1F2937" text-anchor="middle">401</text>
   <path d="M 800 125 L 840 125 L 840 370 L 872 370" fill="none" stroke="#C1443C" stroke-width="1.8" stroke-dasharray="7 5" marker-end="url(#red)" />
-  <rect x="780" y="287" width="179" height="19" rx="4" fill="#FFFFFF" />
-  <text x="870" y="300" font-size="13" fill="#1F2937" text-anchor="middle">400 / 404 / 409 / 500</text>
-  <path d="M 990 330 L 990 300 L 420 300 L 420 328" fill="none" stroke="#C1443C" stroke-width="1.8" stroke-dasharray="7 5" marker-end="url(#red)" />
-  <rect x="519" y="269" width="83" height="19" rx="4" fill="#FFFFFF" />
-  <text x="560" y="282" font-size="13" fill="#1F2937" text-anchor="middle">4xx / 5xx</text>
+  <rect x="780" y="197" width="179" height="19" rx="4" fill="#FFFFFF" />
+  <text x="870" y="210" font-size="13" fill="#1F2937" text-anchor="middle">400 / 404 / 409 / 500</text>
+  <path d="M 990 420 L 990 480 L 420 480 L 420 432" fill="none" stroke="#C1443C" stroke-width="1.8" stroke-dasharray="7 5" marker-end="url(#red)" />
+  <rect x="479" y="449" width="83" height="19" rx="4" fill="#FFFFFF" />
+  <text x="520" y="462" font-size="13" fill="#1F2937" text-anchor="middle">4xx / 5xx</text>
   <rect x="40" y="80" width="200" height="90" rx="14" fill="#FFFFFF" stroke="#3C4654" stroke-width="1.8" />
   <text x="140" y="120" font-size="15" fill="#1F2937" text-anchor="middle">Flutter web client</text>
   <text x="140" y="140" font-size="15" fill="#1F2937" text-anchor="middle">(Netlify)</text>
@@ -52,7 +52,7 @@
   <text x="700" y="390" font-size="15" fill="#1F2937" text-anchor="middle">rules + transaction</text>
   <rect x="880" y="330" width="220" height="90" rx="14" fill="#FFFFFF" stroke="#C1443C" stroke-width="1.8" />
   <text x="990" y="370" font-size="15" fill="#1F2937" text-anchor="middle">GlobalExceptionHandler</text>
-  <text x="990" y="390" font-size="15" fill="#1F2937" text-anchor="middle">ProblemDetail</text>
+  <text x="990" y="390" font-size="15" fill="#1F2937" text-anchor="middle">builds the envelope</text>
   <path d="M 600 556 A 100.0 16 0 0 1 800 556 L 800 634 A 100.0 16 0 0 1 600 634 Z" fill="#FFFFFF" stroke="#1F3864" stroke-width="1.8" />
   <path d="M 600 556 A 100.0 16 0 0 0 800 556" fill="#FFFFFF" stroke="#1F3864" stroke-width="1.8" />
   <text x="700" y="598" font-size="15" fill="#1F2937" text-anchor="middle">Neon PostgreSQL</text>
