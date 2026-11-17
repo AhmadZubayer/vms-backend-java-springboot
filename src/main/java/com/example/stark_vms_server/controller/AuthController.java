@@ -38,7 +38,7 @@ public class AuthController {
 
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.noStore())
-                .body(SendResponse.of(token));
+                .body(SendResponse.ok("Signed in successfully.", token));
     }
 
     @GetMapping("/me")
@@ -50,6 +50,6 @@ public class AuthController {
 
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.noStore())
-                .body(SendResponse.of(user));
+                .body(SendResponse.ok("Account loaded successfully.", user));
     }
 }

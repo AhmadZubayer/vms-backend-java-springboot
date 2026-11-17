@@ -30,7 +30,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 @RequestMapping("/api/vehicles")
 public class VehicleController {
-
     private final VehicleService vehicleService;
 
     public VehicleController(VehicleService vehicleService) {
@@ -47,17 +46,22 @@ public class VehicleController {
                 .buildAndExpand(vehicle.id())
                 .toUri();
 
-        return ResponseEntity.created(location).body(SendResponse.of(vehicle));
+        return ResponseEntity.created(location)
+                .body(SendResponse.created("Vehicle created successfully.", vehicle));
     }
 
     @GetMapping("/stats")
     public ResponseEntity<SendResponse<VehicleStatsResponse>> stats() {
-        return ResponseEntity.ok(SendResponse.of(vehicleService.stats()));
+        return ResponseEntity.ok(SendResponse.ok(
+                "Vehicle statistics loaded successfully.", vehicleService.stats()
+        ));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<SendResponse<VehicleResponse>> findById(@PathVariable("id") long id) {
-        return ResponseEntity.ok(SendResponse.of(vehicleService.findById(id)));
+        return ResponseEntity.ok(SendResponse.ok(
+                "Vehicle loaded successfully.", vehicleService.findById(id)
+        ));
     }
 
     @GetMapping
@@ -65,7 +69,8 @@ public class VehicleController {
             @RequestParam(name = "q", required = false) @Size(max = 64) String q,
             @RequestParam(name = "status", required = false) String status,
             @PageableDefault(size = 20, sort = "id") Pageable pageable) {
-        return ResponseEntity.ok(SendResponse.of(
+        return ResponseEntity.ok(SendResponse.ok(
+                "Vehicles loaded successfully.",
                 new PagedModel<>(vehicleService.search(q, parseStatus(status), pageable))
         ));
     }
@@ -74,17 +79,18 @@ public class VehicleController {
     public ResponseEntity<SendResponse<VehicleResponse>> update(
             @PathVariable("id") long id,
             @Valid @RequestBody VehicleWriteRequest request) {
-        return ResponseEntity.ok(SendResponse.of(vehicleService.update(id, request)));
+        return ResponseEntity.ok(SendResponse.ok(
+                "Vehicle updated successfully.", vehicleService.update(id, request)
+        ));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") long id) {
+    public ResponseEntity<SendResponse<Void>> delete(@PathVariable("id") long id) {
         vehicleService.delete(id);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(SendResponse.done("Vehicle deleted successfully."));
     }
 
-    /** Reads the optional status filter, ignoring case and surrounding spaces. */
     private static Vehicle.Status parseStatus(String status) {
         if (status == null || status.isBlank()) {
             return null;

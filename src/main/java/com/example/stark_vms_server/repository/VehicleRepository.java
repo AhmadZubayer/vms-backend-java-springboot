@@ -12,7 +12,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
-
     @Query("""
             select vehicle from Vehicle vehicle
             where lower(vehicle.vehicleNumber) like lower(concat('%', :term, '%'))
@@ -47,9 +46,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
     @Query("select vehicle from Vehicle vehicle where vehicle.id = :id")
     Optional<Vehicle> findForUpdate(@Param("id") long id);
 
-    /** One row of the vehicle count per status. */
     interface StatusTotal {
-
         String getStatus();
 
         long getTotal();

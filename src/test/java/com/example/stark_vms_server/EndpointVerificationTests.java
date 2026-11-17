@@ -61,6 +61,10 @@ class EndpointVerificationTests {
         try {
             MockHttpServletResponse health = call(get("/api/health"));
             check("GET /api/health", 200, health);
+            record("health envelope carries statusCode and message",
+                    tree(health).path("statusCode").asInt() == 200
+                            && !tree(health).path("message").asString().isEmpty(),
+                    "envelope=" + tree(health).path("statusCode") + " " + tree(health).path("message"));
             record("health reports the server and the database",
                     "UP".equals(tree(health).path("data").path("status").asString())
                             && tree(health).path("data").path("databaseConnected").asBoolean(),
@@ -107,6 +111,10 @@ class EndpointVerificationTests {
                     "Location=" + created.getHeader(HttpHeaders.LOCATION));
             record("create wraps the body in data",
                     tree(created).has("data"), "keys=" + tree(created).propertyNames());
+            record("create envelope carries statusCode and message",
+                    tree(created).path("statusCode").asInt() == 201
+                            && tree(created).path("message").asString().toLowerCase().contains("created"),
+                    "envelope=" + tree(created).path("statusCode") + " " + tree(created).path("message"));
 
             check("POST /api/vehicles duplicate plate", 409,
                     call(post("/api/vehicles")
@@ -119,15 +127,24 @@ class EndpointVerificationTests {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(body(Map.of("vehicleNumber", "", "brand", "Toyota"))));
             check("POST /api/vehicles invalid body", 400, invalidBody);
-            record("body validation lists field errors",
-                    tree(invalidBody).path("errors").isArray()
-                            && !tree(invalidBody).path("errors").isEmpty(),
-                    "errors=" + tree(invalidBody).path("errors"));
+            record("body validation lists field errors in data",
+                    tree(invalidBody).path("data").isArray()
+                            && !tree(invalidBody).path("data").isEmpty(),
+                    "data=" + tree(invalidBody).path("data"));
 
             check("GET /api/vehicles/{id}", 200,
                     call(get("/api/vehicles/" + createdId).header(HttpHeaders.AUTHORIZATION, bearer(token))));
-            check("GET /api/vehicles/{missing}", 404,
-                    call(get("/api/vehicles/" + MISSING_ID).header(HttpHeaders.AUTHORIZATION, bearer(token))));
+            MockHttpServletResponse missing = call(
+                    get("/api/vehicles/" + MISSING_ID).header(HttpHeaders.AUTHORIZATION, bearer(token)));
+            check("GET /api/vehicles/{missing}", 404, missing);
+            record("failures use the same envelope as successes",
+                    tree(missing).path("statusCode").asInt() == 404
+                            && tree(missing).path("message").asString().contains("not found")
+                            && tree(missing).has("data"),
+                    "envelope=" + shorten(tree(missing).toString()));
+            record("failures name the operation that failed",
+                    tree(missing).path("message").asString().toLowerCase().startsWith("vehicle could not"),
+                    "message=" + tree(missing).path("message"));
 
             MockHttpServletResponse list = call(get("/api/vehicles")
                     .header(HttpHeaders.AUTHORIZATION, bearer(token)));
@@ -182,8 +199,8 @@ class EndpointVerificationTests {
                     .param("q", "x".repeat(65))
                     .header(HttpHeaders.AUTHORIZATION, bearer(token)));
             check("GET /api/vehicles?q= too long", 400, longTerm);
-            record("query-param validation lists field errors",
-                    longTerm.getContentAsString().contains("\"errors\""),
+            record("query-param validation lists field errors in data",
+                    tree(longTerm).path("data").isArray(),
                     "body=" + shorten(longTerm.getContentAsString()));
 
             MockHttpServletResponse clamped = call(get("/api/vehicles").param("size", "500")
@@ -220,8 +237,12 @@ class EndpointVerificationTests {
                             && String.valueOf(docs.getHeader(HttpHeaders.LOCATION)).contains("swagger-ui"),
                     "status=" + docs.getStatus() + " Location=" + docs.getHeader(HttpHeaders.LOCATION));
 
-            check("DELETE /api/vehicles/{id}", 204,
-                    call(delete("/api/vehicles/" + createdId).header(HttpHeaders.AUTHORIZATION, bearer(token))));
+            MockHttpServletResponse deleted = call(
+                    delete("/api/vehicles/" + createdId).header(HttpHeaders.AUTHORIZATION, bearer(token)));
+            check("DELETE /api/vehicles/{id}", 200, deleted);
+            record("delete reports what happened",
+                    tree(deleted).path("message").asString().toLowerCase().contains("deleted"),
+                    "message=" + tree(deleted).path("message"));
             check("DELETE /api/vehicles/{id} again", 404,
                     call(delete("/api/vehicles/" + createdId).header(HttpHeaders.AUTHORIZATION, bearer(token))));
             createdId = null;

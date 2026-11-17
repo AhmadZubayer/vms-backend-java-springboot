@@ -29,7 +29,10 @@ public class HealthController {
     public ResponseEntity<SendResponse<HealthResponse>> health() {
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.noStore())
-                .body(SendResponse.of(HealthResponse.up(databaseConnected())));
+                .body(SendResponse.ok(
+                        "Health check completed successfully.",
+                        HealthResponse.up(databaseConnected())
+                ));
     }
 
     private boolean databaseConnected() {

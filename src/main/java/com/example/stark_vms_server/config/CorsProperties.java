@@ -5,14 +5,6 @@ import java.util.List;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
-/**
- * Browser origins allowed to call the API, read from
- * {@code APP_CORS_ALLOWED_ORIGIN_PATTERNS} so every environment sets its own.
- *
- * <p>Patterns accept the {@code *} wildcard, so {@code http://localhost:*}
- * covers the random port a Flutter web development server picks, and
- * {@code https://vms.example.com} names a deployed client exactly.
- */
 @Validated
 @ConfigurationProperties(prefix = "app.cors")
 public record CorsProperties(

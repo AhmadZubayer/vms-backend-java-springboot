@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class VehicleService {
-
     private static final Set<String> SORTABLE_PROPERTIES = Set.of(
             "id", "vehicleNumber", "brand", "company", "model", "type", "status"
     );
@@ -62,7 +61,6 @@ public class VehicleService {
         return vehicles.map(VehicleResponse::from);
     }
 
-    /** Counts every vehicle and how many sit in each status, including the empty ones. */
     @Transactional(readOnly = true)
     public VehicleStatsResponse stats() {
         Map<String, Long> totals = new LinkedHashMap<>();

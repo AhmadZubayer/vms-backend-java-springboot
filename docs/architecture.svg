@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 740" width="1180" height="740" font-family="Roboto Mono, DejaVu Sans Mono, Consolas, monospace">
+  <defs>
+    <marker id="blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1F3864" /></marker>
+    <marker id="red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#C1443C" /></marker>
+    <marker id="grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3C4654" /></marker>
+    <marker id="green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2E7D32" /></marker>
+  </defs>
+  <rect width="1180" height="740" fill="#FFFFFF" />
+  <path d="M 240 125 L 310 125" fill="none" stroke="#3C4654" stroke-width="1.8" marker-end="url(#grey)" />
+  <rect x="242" y="91" width="66" height="19" rx="4" fill="#FFFFFF" />
+  <text x="275" y="104" font-size="13" fill="#1F2937" text-anchor="middle">Request</text>
+  <path d="M 520 125 L 590 125" fill="none" stroke="#1F3864" stroke-width="1.8" marker-end="url(#blue)" />
+  <path d="M 700 170 L 700 322" fill="none" stroke="#1F3864" stroke-width="1.8" marker-end="url(#blue)" />
+  <rect x="721" y="237" width="50" height="19" rx="4" fill="#FFFFFF" />
+  <text x="746" y="250" font-size="13" fill="#1F2937" text-anchor="middle">calls</text>
+  <path d="M 660 420 L 660 532" fill="none" stroke="#1F3864" stroke-width="1.8" marker-end="url(#blue)" />
+  <rect x="571" y="479" width="50" height="19" rx="4" fill="#FFFFFF" />
+  <text x="596" y="492" font-size="13" fill="#1F2937" text-anchor="middle">query</text>
+  <path d="M 740 532 L 740 428" fill="none" stroke="#1F3864" stroke-width="1.8" marker-end="url(#blue)" />
+  <rect x="789" y="479" width="58" height="19" rx="4" fill="#FFFFFF" />
+  <text x="818" y="492" font-size="13" fill="#1F2937" text-anchor="middle">entity</text>
+  <path d="M 600 375 L 528 375" fill="none" stroke="#1F3864" stroke-width="1.8" marker-end="url(#blue)" />
+  <rect x="503" y="303" width="115" height="19" rx="4" fill="#FFFFFF" />
+  <text x="560" y="316" font-size="13" fill="#1F2937" text-anchor="middle">entity to DTO</text>
+  <path d="M 320 375 L 140 375 L 140 176" fill="none" stroke="#2E7D32" stroke-width="1.8" marker-end="url(#green)" />
+  <rect x="143" y="343" width="115" height="19" rx="4" fill="#FFFFFF" />
+  <text x="200" y="356" font-size="13" fill="#1F2937" text-anchor="middle">json envelope</text>
+  <path d="M 420 170 L 420 250 L 990 250 L 990 322" fill="none" stroke="#C1443C" stroke-width="1.8" stroke-dasharray="7 5" marker-end="url(#red)" />
+  <rect x="683" y="219" width="34" height="19" rx="4" fill="#FFFFFF" />
+  <text x="700" y="232" font-size="13" fill="#1F2937" text-anchor="middle">401</text>
+  <path d="M 800 125 L 840 125 L 840 370 L 872 370" fill="none" stroke="#C1443C" stroke-width="1.8" stroke-dasharray="7 5" marker-end="url(#red)" />
+  <rect x="780" y="287" width="179" height="19" rx="4" fill="#FFFFFF" />
+  <text x="870" y="300" font-size="13" fill="#1F2937" text-anchor="middle">400 / 404 / 409 / 500</text>
+  <path d="M 990 330 L 990 300 L 420 300 L 420 328" fill="none" stroke="#C1443C" stroke-width="1.8" stroke-dasharray="7 5" marker-end="url(#red)" />
+  <rect x="519" y="269" width="83" height="19" rx="4" fill="#FFFFFF" />
+  <text x="560" y="282" font-size="13" fill="#1F2937" text-anchor="middle">4xx / 5xx</text>
+  <rect x="40" y="80" width="200" height="90" rx="14" fill="#FFFFFF" stroke="#3C4654" stroke-width="1.8" />
+  <text x="140" y="120" font-size="15" fill="#1F2937" text-anchor="middle">Flutter web client</text>
+  <text x="140" y="140" font-size="15" fill="#1F2937" text-anchor="middle">(Netlify)</text>
+  <rect x="320" y="80" width="200" height="90" rx="14" fill="#FFFFFF" stroke="#1F3864" stroke-width="1.8" />
+  <text x="420" y="120" font-size="15" fill="#1F2937" text-anchor="middle">Auth middleware</text>
+  <text x="420" y="140" font-size="15" fill="#1F2937" text-anchor="middle">CORS + JWT check</text>
+  <rect x="600" y="80" width="200" height="90" rx="14" fill="#FFFFFF" stroke="#1F3864" stroke-width="1.8" />
+  <text x="700" y="120" font-size="15" fill="#1F2937" text-anchor="middle">Controller</text>
+  <text x="700" y="140" font-size="15" fill="#1F2937" text-anchor="middle">route + @Valid DTO</text>
+  <rect x="320" y="330" width="200" height="100" rx="14" fill="#FFFFFF" stroke="#1F3864" stroke-width="1.8" />
+  <text x="420" y="365" font-size="15" fill="#1F2937" text-anchor="middle">SendResponse</text>
+  <text x="420" y="385" font-size="15" fill="#1F2937" text-anchor="middle">statusCode, message,</text>
+  <text x="420" y="405" font-size="15" fill="#1F2937" text-anchor="middle">data</text>
+  <rect x="600" y="330" width="200" height="90" rx="14" fill="#FFFFFF" stroke="#1F3864" stroke-width="1.8" />
+  <text x="700" y="370" font-size="15" fill="#1F2937" text-anchor="middle">Service</text>
+  <text x="700" y="390" font-size="15" fill="#1F2937" text-anchor="middle">rules + transaction</text>
+  <rect x="880" y="330" width="220" height="90" rx="14" fill="#FFFFFF" stroke="#C1443C" stroke-width="1.8" />
+  <text x="990" y="370" font-size="15" fill="#1F2937" text-anchor="middle">GlobalExceptionHandler</text>
+  <text x="990" y="390" font-size="15" fill="#1F2937" text-anchor="middle">ProblemDetail</text>
+  <path d="M 600 556 A 100.0 16 0 0 1 800 556 L 800 634 A 100.0 16 0 0 1 600 634 Z" fill="#FFFFFF" stroke="#1F3864" stroke-width="1.8" />
+  <path d="M 600 556 A 100.0 16 0 0 0 800 556" fill="#FFFFFF" stroke="#1F3864" stroke-width="1.8" />
+  <text x="700" y="598" font-size="15" fill="#1F2937" text-anchor="middle">Neon PostgreSQL</text>
+  <text x="700" y="618" font-size="15" fill="#1F2937" text-anchor="middle">JPA / Hibernate</text>
+</svg>

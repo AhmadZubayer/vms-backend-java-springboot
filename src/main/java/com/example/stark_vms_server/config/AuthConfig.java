@@ -1,6 +1,9 @@
 package com.example.stark_vms_server.config;
 
+import com.example.stark_vms_server.dto.SendResponse;
+import com.example.stark_vms_server.exception.FailedOperation;
 import jakarta.servlet.DispatcherType;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Base64;
@@ -12,7 +15,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ProblemDetail;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -37,7 +39,6 @@ import tools.jackson.databind.ObjectMapper;
 @Configuration
 @EnableConfigurationProperties(AuthProperties.class)
 public class AuthConfig {
-
     public static final String JWT_ISSUER = "stark-vms";
     public static final String JWT_AUDIENCE = "stark-vms-api";
 
@@ -56,13 +57,15 @@ public class AuthConfig {
         AuthenticationEntryPoint unauthorized = (request, response, exception) -> {
             bearerEntryPoint.commence(request, response, exception);
             HttpStatus status = HttpStatus.valueOf(response.getStatus());
-            writeProblem(json, response, status, "Provide a valid bearer access token.");
+            writeProblem(json, request, response, status,
+                    "Provide a valid bearer access token.");
         };
 
         BearerTokenAccessDeniedHandler bearerAccessDenied = new BearerTokenAccessDeniedHandler();
         AccessDeniedHandler forbidden = (request, response, exception) -> {
             bearerAccessDenied.handle(request, response, exception);
-            writeProblem(json, response, HttpStatus.FORBIDDEN, "Access to this resource is denied.");
+            writeProblem(json, request, response, HttpStatus.FORBIDDEN,
+                    "Access to this resource is denied.");
         };
 
         return http
@@ -117,9 +120,17 @@ public class AuthConfig {
     }
 
     private static void writeProblem(
-            ObjectMapper json, HttpServletResponse response, HttpStatus status, String detail
+            ObjectMapper json,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            HttpStatus status,
+            String reason
     ) throws IOException {
-        response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
-        json.writeValue(response.getOutputStream(), ProblemDetail.forStatusAndDetail(status, detail));
+        String detail = FailedOperation.message(
+                request.getMethod(), request.getRequestURI(), reason
+        );
+
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        json.writeValue(response.getOutputStream(), SendResponse.of(status, detail, null));
     }
 }
